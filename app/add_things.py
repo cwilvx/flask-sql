@@ -8,10 +8,11 @@ bp = Blueprint('add_things', __name__, url_prefix='')
 
 @bp.route('/add', methods=('GET', 'POST'))
 def add_thing():
+    
+    db = get_db()
     if request.method == 'POST':
         thing = request.form['thing']
         nickname = request.form['thing']
-        db = get_db()
         error = None
 
         if not thing:
@@ -29,15 +30,16 @@ def add_thing():
                 (thing, nickname)
             )
             db.commit()
-        
-        all_things_obj = db.execute(
-            'SELECT * FROM things'
-        ).fetchall()
-        
-        all_things = []
-        for thing in all_things_obj:
-            all_things.append(thing[1])
-
         flash(error)
+
+        
+    all_things_obj = db.execute(
+        'SELECT * FROM things'
+    ).fetchall()
+    
+    all_things = []
+    for thing in all_things_obj:
+        all_things.append(thing[1])
+
 
     return render_template('things/register.html', all_things=all_things)
